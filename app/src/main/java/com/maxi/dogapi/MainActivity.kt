@@ -1,14 +1,11 @@
 package com.maxi.dogapi
 
 import android.os.Bundle
-import android.util.Log
 import android.view.View
 import android.widget.Toast
 import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
-import coil.ImageLoader
 import coil.load
-import coil.request.ImageRequest
 import coil.transform.RoundedCornersTransformation
 import com.maxi.dogapi.databinding.ActivityMainBinding
 import com.maxi.dogapi.utils.NetworkResult
@@ -43,7 +40,6 @@ class MainActivity : AppCompatActivity() {
                         ) {
                             transformations(RoundedCornersTransformation(16f))
                         }
-                        downloadImage(response.data.message)
                     }
                     _binding.pbDog.visibility = View.GONE
                 }
@@ -62,18 +58,6 @@ class MainActivity : AppCompatActivity() {
                 }
             }
         }
-    }
-
-    private fun downloadImage(url: String) {
-        mainViewModel.downloadImage(url)
-        val imageLoader = ImageLoader(this)
-        val request = ImageRequest.Builder(this)
-            .data(url)
-            .target { drawable ->
-                Log.d("TAG", "downloadImage: ")
-            }
-            .build()
-        val disposable = imageLoader.enqueue(request)
     }
 
     private fun fetchResponse() {
