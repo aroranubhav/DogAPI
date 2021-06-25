@@ -11,6 +11,8 @@
             android:id="@+id/imgDog"
             android:layout_width="0dp"
             android:layout_height="0dp"
+            android:adjustViewBounds="true"
+            android:scaleType="fitCenter"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintLeft_toLeftOf="parent"
             app:layout_constraintRight_toRightOf="parent"
@@ -31,16 +33,31 @@
             app:layout_constraintTop_toTopOf="parent"
             app:layout_constraintBottom_toBottomOf="parent"/>
 
-    <ImageView
-            android:id="@+id/imgRefresh"
-            android:layout_width="50dp"
-            android:layout_height="50dp"
+    <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintHorizontal_bias="0.5"
             app:layout_constraintEnd_toEndOf="parent"
-            android:src="@drawable/ic_refresh"
-            android:contentDescription="@string/refresh"
             app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/imgDog"/>
+            app:layout_constraintTop_toBottomOf="@+id/imgDog">
+
+
+        <ImageView
+                android:id="@+id/imgRefresh"
+                android:layout_width="0dp"
+                android:layout_height="50dp"
+                android:layout_weight="1"
+                android:src="@drawable/ic_refresh"
+                android:contentDescription="@string/refresh"/>
+
+        <ImageView
+                android:id="@+id/imgDownload"
+                android:layout_width="0dp"
+                android:layout_height="50dp"
+                android:layout_weight="1"
+                android:src="@drawable/ic_download"
+                android:contentDescription="@string/refresh"/>
+
+    </LinearLayout>
 
 </androidx.constraintlayout.widget.ConstraintLayout>

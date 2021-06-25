@@ -2,6 +2,7 @@ package com.maxi.dogapi.viewmodel
 
 import android.app.Application
 import android.content.Context
+import android.graphics.Bitmap
 import android.net.ConnectivityManager
 import android.net.NetworkCapabilities
 import androidx.lifecycle.AndroidViewModel
@@ -12,11 +13,11 @@ import com.maxi.dogapi.data.Repository
 import com.maxi.dogapi.model.DogResponse
 import com.maxi.dogapi.utils.NetworkResult
 import dagger.hilt.android.lifecycle.HiltViewModel
-import kotlinx.coroutines.async
-import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.launch
+import java.io.File
 import javax.inject.Inject
+
 
 @HiltViewModel
 class MainViewModel @Inject constructor
@@ -28,6 +29,9 @@ class MainViewModel @Inject constructor
     private val _response: MutableLiveData<NetworkResult<DogResponse>> = MutableLiveData()
     val response: LiveData<NetworkResult<DogResponse>> = _response
 
+    private val _downloadResponse: MutableLiveData<Boolean> = MutableLiveData()
+    val downloadResponse = _downloadResponse
+
     fun fetchDogResponse() = viewModelScope.launch {
         repository.getDog().collect { values ->
             _response.value = values
@@ -35,15 +39,11 @@ class MainViewModel @Inject constructor
     }
 
 
-    fun downloadImage(url: String) {
+    fun downloadImage(bitmap: Bitmap, dir: File, fileName: String) {
+
         viewModelScope.launch {
-            try {
-                val getObject1Task = async { repository.getDog() }
-                val getObject2Task = async { repository.getDog() }
-
-                processData(getObject1Task.await(), getObject2Task.await())
-            } catch (exception: Exception) {
-
+            repository.saveImage(bitmap, dir, fileName).collect { value ->
+                _downloadResponse.value = value
             }
         }
     }

@@ -1,6 +1,8 @@
 package com.maxi.dogapi.data
 
 import android.graphics.Bitmap
+import android.os.Environment
+import androidx.core.content.ContextCompat.getExternalFilesDirs
 import com.maxi.dogapi.data.remote.RemoteDataSource
 import com.maxi.dogapi.model.BaseApiResponse
 import com.maxi.dogapi.model.DogResponse
@@ -27,24 +29,33 @@ class Repository @Inject constructor(
         }.flowOn(Dispatchers.IO)
     }
 
-}
+    fun saveImage(image: Bitmap, storageDir: File, imageFileName: String): Flow<Boolean> {
 
-private fun saveImage(image: Bitmap, storageDir: File, imageFileName: String) {
-    var successDirCreated = false
-    if (!storageDir.exists()) {
-        successDirCreated = storageDir.mkdir()
-    }
-    if (successDirCreated) {
-        val imageFile = File(storageDir, imageFileName)
-        val savedImagePath: String = imageFile.getAbsolutePath()
-        try {
-            val fOut: OutputStream = FileOutputStream(imageFile)
-            image.compress(Bitmap.CompressFormat.JPEG, 100, fOut)
-            fOut.close()
-        } catch (e: Exception) {
-            e.printStackTrace()
+        val successDirCreated = if (!storageDir.exists()) {
+            storageDir.mkdir()
+        } else {
+            true
         }
-    } else {
 
+        if (successDirCreated) {
+            val imageFile = File(storageDir, imageFileName)
+            return try {
+                val fOut: OutputStream = FileOutputStream(imageFile)
+                image.compress(Bitmap.CompressFormat.JPEG, 100, fOut)
+                fOut.close()
+                flow {
+                    emit(true)
+                }.flowOn(Dispatchers.IO)
+            } catch (e: Exception) {
+                e.printStackTrace()
+                flow {
+                    emit(false)
+                }.flowOn(Dispatchers.IO)
+            }
+        } else {
+            return flow { emit(false) }.flowOn(Dispatchers.IO)
+        }
     }
+
 }
+
